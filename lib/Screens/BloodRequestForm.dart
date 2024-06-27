@@ -26,6 +26,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   final TextEditingController _hospitalNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _problemPhoneController = TextEditingController();
 
   Widget _buildSelectableContainer({
     required String text,
@@ -96,6 +97,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
         location: _locationController.text,
         date: _selectedDate!,
         time: _selectedTime!,
+        reason: _problemPhoneController.text,
       ));
     } else {
       // Show a dialog or snackbar prompting the user to select date and time
@@ -268,6 +270,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                 ),
                 TextFormField(
                   textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
                   controller: _patientNameController,
                   decoration: InputDecoration(
                     filled: true,
@@ -368,6 +371,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                 ),
                 TextFormField(
                   textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
                   controller: _hospitalNameController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.local_hospital),
@@ -393,6 +397,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                 ),
                 TextFormField(
                   textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
                   controller: _locationController,
                   decoration: InputDecoration(
                     filled: true,
@@ -429,6 +434,31 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the age';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Patient Problem",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  controller: _problemPhoneController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.black.withOpacity(0.1),
+                    border: InputBorder.none,
+                    prefixIcon: const Icon(Icons.note_outlined),
+                    labelText: 'Cause of blood ',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the problem';
                     }
                     return null;
                   },

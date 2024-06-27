@@ -65,7 +65,57 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const UserAccountsDrawerHeader(
+              accountName: Text("John Doe"),
+              accountEmail: Text("johndoe@example.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  "https://via.placeholder.com/150",
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.app_registration),
+              title: const Text('Donor Registration'),
+              onTap: () {
+                Get.to(const DonorRegisterFormScreen());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add_rounded),
+              title: const Text('Find Donor'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bloodtype),
+              title: const Text('Blood Request'),
+              onTap: () {
+                Get.to(const BloodRequestForm());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                Get.to(const ProfileScreen());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(

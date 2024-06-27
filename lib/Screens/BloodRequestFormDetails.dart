@@ -14,7 +14,7 @@ class RequestDetailsPage extends StatelessWidget {
   final String location;
   final DateTime date;
   final TimeOfDay time;
-
+  final String reason;
 
   const RequestDetailsPage({
     Key? key,
@@ -28,7 +28,8 @@ class RequestDetailsPage extends StatelessWidget {
     required this.gender,
     required this.location,
     required this.date,
-    required this.time
+    required this.time,
+    required this.reason
   }) : super(key: key);
 
   Widget _buildDetailRow({required IconData icon, required String label, required String value}) {
@@ -85,6 +86,9 @@ class RequestDetailsPage extends StatelessWidget {
               const Divider(),
               _buildDetailRow(icon: Icons.person_outline, label: "Gender", value: gender),
               const Divider(),
+              const Divider(),
+              _buildDetailRow(icon: Icons.note_outlined, label: "Problem", value: reason),
+
               _buildDetailRow(icon: Icons.date_range, label: "Date", value:  DateFormat.yMd().format(date)),
               const Divider(),
               _buildDetailRow(icon: Icons.av_timer_sharp, label: "Time", value: time.format(context)),
