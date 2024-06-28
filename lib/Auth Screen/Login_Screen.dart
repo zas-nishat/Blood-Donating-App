@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,8 +21,80 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscureText = true;
 
-  Future signIn() async{
+  Future<void> signIn(BuildContext context) async {
+    if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter both email and password"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
 
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      Navigator.pop(context); // Close the progress dialog on success
+
+      // Navigate to the next screen or perform other actions on successful login
+      // For example: Navigator.pushReplacementNamed(context, '/home');
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context); // Close the progress dialog on error
+
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Email not found"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Wrong password"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Check Your Email and Password. Make sure Password is Correct"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close the progress dialog on error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("An error occurred: $e"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -174,9 +247,8 @@ class _LoginPageState extends State<LoginPage> {
               // Continue Button
               GestureDetector(
                 onTap: () {
-                  // if(_formKey.currentState!.validate());
-                  // signIn();
-                  Get.to(HomePage());
+                  if(_formKey.currentState!.validate());
+                  signIn(context);
                   },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),

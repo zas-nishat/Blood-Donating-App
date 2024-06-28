@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedIndex = -1;
 
+  ///Select option
   Widget _container(String image, String text, bool isSelected, Function() onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -54,6 +56,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  ///LogOut Dialogue Box
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,10 +101,10 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const UserAccountsDrawerHeader(
-              accountName: Text("John Doe"),
-              accountEmail: Text("johndoe@example.com"),
-              currentAccountPicture: CircleAvatar(
+            UserAccountsDrawerHeader(
+              accountName: const Text("John Doe"),
+              accountEmail: Text(currentUser.email![0].toUpperCase() + currentUser.email!.substring(1)),
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: NetworkImage(
                   "https://via.placeholder.com/150",
                 ),
@@ -103,14 +135,14 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.person),
               title: const Text('Profile'),
               onTap: () {
-                Get.to(const ProfileScreen());
+                Get.to(ProfileScreen());
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
               onTap: () {
-                Navigator.pop(context);
+                _showLogoutConfirmationDialog(context);
               },
             ),
           ],
@@ -132,7 +164,6 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       selectedIndex = 0;
                     });
-                    Get.to(const ProfileScreen());
                   },
                 ),
                 _container(

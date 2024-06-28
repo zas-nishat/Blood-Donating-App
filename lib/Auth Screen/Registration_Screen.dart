@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Function()? onTap;
-  const RegistrationScreen({Key? key, required this.onTap}) : super(key: key);
+  const RegistrationScreen({Key? key, this.onTap}) : super(key: key);
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -14,9 +17,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   File? _image;
   final picker = ImagePicker();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _educationController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   String? _selectedGender;
   String? _selectedBloodGroup;
   final _globalKey = GlobalKey<FormState>();
@@ -59,9 +63,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future _signUp() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      final uid = userCredential.user!.uid;
+      addUserDetails(
+          _nameController.text.trim(),
+          _emailController.text.trim(),
+          _phoneNumberController.text.trim(),
+          _image.toString(),
+          _locationController.text.trim(),
+          _selectedGender.toString(),
+          _selectedBloodGroup.toString() as int,
+        uid: uid
 
+      );
+    } catch (e) {
+     }
   }
 
+
+  Future addUserDetails(String username, String email, String profile_image, String location, String gender, String blood_group,int phone,
+      { String? uid}) async {
+    await FirebaseFirestore.instance.collection("Users").doc(uid).set({
+      "userName": username,
+      'email': email,
+      "phoneNumber": phone,
+      "profile_image": profile_image,
+      'location': location,
+      "gender": gender,
+      "blood_group": blood_group,
+
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +138,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
 
-
                 // Name TextFormField
                 const Text(
                   "Name",
@@ -125,24 +161,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Education TextFormField
+                // Email TextFormField
                 const Text(
-                  "Location",
+                  "Email",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 3,),
                 TextFormField(
-                  controller: _educationController,
+                  controller: _emailController,
                   validator: (val) {
                     if (val == null || val.isEmpty) {
-                      return "Enter your Location";
+                      return "Enter your Email";
                     } else {
                       return null;
                     }
                   },
                   decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.location_on_outlined),
-                    hintText: 'Location',
+                    prefixIcon: Icon(Icons.email),
+                    hintText: 'Email',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -169,6 +205,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 20),
+
+                // Location TextFormField
+                const Text(
+                  "Location",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 3,),
+                TextFormField(
+                  controller: _locationController,
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return "Enter your Location";
+                    } else {
+                      return null;
+                    }
+                  },
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.location_on_outlined),
+                    hintText: 'Location',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(height: 20),
 

@@ -1,3 +1,4 @@
+import 'package:blood_donating/Auth%20Screen/MainPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginOrRegister(),
+      home: const MainHomePage(),
     );
   }
 }
