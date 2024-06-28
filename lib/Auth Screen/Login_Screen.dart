@@ -1,3 +1,4 @@
+import 'package:blood_donating/Auth%20Screen/ForgotPassword_Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -235,7 +236,9 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
-                    onTap: (){ },
+                    onTap: (){
+                      Get.to(ForgetPasswordPage());
+                    },
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 6.0),
                       child: Text("Forgot password?"),

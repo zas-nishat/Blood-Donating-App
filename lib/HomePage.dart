@@ -102,6 +102,10 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.red
+                , // Replace with the desired color
+              ),
               accountName: const Text("John Doe"),
               accountEmail: Text(currentUser.email![0].toUpperCase() + currentUser.email!.substring(1)),
               currentAccountPicture: const CircleAvatar(
