@@ -1,14 +1,13 @@
 import 'package:blood_donating/Screens/FindDonor_Page.dart';
+import 'package:blood_donating/Widget/Custom%20Drawer%20Header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'Screens/AllBloodRequest_Screen.dart';
 import 'Screens/BloodRequestForm.dart';
 import 'Screens/DonorRegisterForm_Screen.dart';
 import 'Screens/HomeRequestList_Screen.dart';
-import 'Screens/Profile_Screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,8 +24,8 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: Get.height * 0.15,
-        width: Get.width * 0.3,
+        height: Get.height * 0.2,
+        width: Get.width * 0.35,
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
@@ -38,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Image.network(
+            Image.asset(
               image,
               height: 60,
             ),
@@ -57,35 +56,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ///LogOut Dialogue Box
-  void _showLogoutConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Logout'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -98,61 +69,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.red
-                , // Replace with the desired color
-              ),
-              accountName: const Text("John Doe"),
-              accountEmail: Text(currentUser.email![0].toUpperCase() + currentUser.email!.substring(1)),
-              currentAccountPicture: const CircleAvatar(
-                backgroundImage: NetworkImage(
-                  "https://via.placeholder.com/150",
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.app_registration),
-              title: const Text('Donor Registration'),
-              onTap: () {
-                Get.to(const DonorRegisterFormScreen());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_add_rounded),
-              title: const Text('Find Donor'),
-              onTap: () {
-                Get.to(const FindDonorPage());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bloodtype),
-              title: const Text('Blood Request'),
-              onTap: () {
-                Get.to(const BloodRequestForm());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {
-                Get.to(ProfileScreen());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                _showLogoutConfirmationDialog(context);
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: CustomDrawerHeader(),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -162,7 +79,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _container(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbXGdX3UjKffveecWO2lvWsjdsg0L9KZhuPA&s",
+                  "Assets/FindDonor.png",
                   'Find Donor',
                   selectedIndex == 0,
                       () {
@@ -173,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 _container(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwM2JmG5hq9wEe4aXjDDj2PMglKgPoXvc7sw&s',
+                  'Assets/Request.png',
                   'Request',
                   selectedIndex == 1,
                       () {
@@ -188,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20,),
             Center(
               child: _container(
-                "https://static.vecteezy.com/system/resources/thumbnails/021/432/955/small_2x/blood-donation-icon-png.png",
+                "Assets/WantToDonate.png",
                 'I want to Donate',
                 selectedIndex == 2,
                     () {

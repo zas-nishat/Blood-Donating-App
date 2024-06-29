@@ -8,6 +8,7 @@ class UserProfile {
   final String blood;
   final String gender;
   final String location;
+  final String? profileImageUrl;
 
   UserProfile({
     required this.uid,
@@ -17,6 +18,7 @@ class UserProfile {
     required this.blood,
     required this.gender,
     required this.location,
+    this.profileImageUrl,
   });
 
   // Factory method to create a UserProfile from Firestore document snapshot
@@ -29,6 +31,7 @@ class UserProfile {
       blood: doc['blood'],
       gender: doc['gender'],
       location: doc['location'],
+      profileImageUrl: doc['photoUrl'],
     );
   }
 }

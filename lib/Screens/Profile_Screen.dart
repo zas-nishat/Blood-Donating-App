@@ -46,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(_downloadURL);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -53,9 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
+      body: StreamBuilder(
         stream: usersCollection.doc(user.uid).snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
@@ -93,9 +94,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
-                                  child: _downloadURL != null
+                                  child: userProfile.profileImageUrl != null
                                       ? CachedNetworkImage(
-                                        imageUrl: _downloadURL!,
+                                        imageUrl: userProfile.profileImageUrl!,
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) => const CircularProgressIndicator(), // Placeholder widget while loading
                                         errorWidget: (context, url, error) => const Icon(Icons.error), // Widget to show in case of error

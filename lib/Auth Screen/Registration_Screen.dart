@@ -117,6 +117,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 3),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   controller: _nameController,
                   validator: (val) {
                     if (val == null || val.isEmpty) {
@@ -140,6 +141,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 3),
                 TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  textCapitalization: TextCapitalization.sentences,
                   controller: _emailController,
                   validator: (val) {
                     if (val == null || val.isEmpty) {
@@ -187,6 +190,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 3),
                 TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   controller: _locationController,
                   validator: (val) {
                     if (val == null || val.isEmpty) {
