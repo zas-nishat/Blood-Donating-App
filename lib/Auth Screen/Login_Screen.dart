@@ -137,24 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 20),
-              // Phone number field with country code
-              // TextField(
-              //   keyboardType: TextInputType.phone,
-              //   decoration: InputDecoration(
-              //     labelText: 'Phone Number',
-              //     border: OutlineInputBorder(),
-              //     prefixIcon: CountryCodePicker(
-              //       onChanged: (countryCode) {
-              //         // Handle country code change
-              //       },
-              //       initialSelection: 'BD',
-              //       favorite: ['+88', 'US'],
-              //       showCountryOnly: false,
-              //       showOnlyCountryWhenClosed: false,
-              //       alignLeft: false,
-              //     ),
-              //   ),
-              // ),
               Form(
                 key: _formKey,
                 child: Column(

@@ -97,12 +97,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     onTap: galleryImage,
                     child: _image == null
                         ? const CircleAvatar(
-                      radius: 80,
+                      radius: 50,
                       backgroundColor: Colors.black,
                       backgroundImage: AssetImage("Assets/profile.png"),
                     )
                         : CircleAvatar(
-                      radius: 80,
+                      radius: 50,
                       backgroundColor: Colors.black,
                       backgroundImage: MemoryImage(_image!),
                     ),
@@ -363,65 +363,68 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Center(
                   child: showProgessBar
                       ? CircularProgressIndicator()
-                      : Container(
-                    width: MediaQuery.of(context).size.width - 38,
-                    height: 54,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: InkWell(
-                      onTap: () async {
-                        if (_globalKey.currentState!.validate()) {
-                          if (_selectedGender == null || _selectedBloodGroup == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please select gender and blood group'),
-                              ),
+                      : InkWell(
+                        onTap: () async {
+                          if (_globalKey.currentState!.validate()) {
+                            if (_selectedGender == null || _selectedBloodGroup == null || _image == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please select gender, blood group and image also'),
+                                ),
+                              );
+                              return;
+                            }
+                            setState(() {
+                              showProgessBar = true;
+                            });
+                            String res = await _authController.createNewUser(
+                              _emailController.text,
+                              _passwordController.text,
+                              _nameController.text,
+                              _phoneNumberController.text,
+                              _locationController.text,
+                              _selectedGender!,
+                              _selectedBloodGroup!,
+                              _image,
                             );
-                            return;
-                          }
-                          setState(() {
-                            showProgessBar = true;
-                          });
-                          String res = await _authController.createNewUser(
-                            _emailController.text,
-                            _passwordController.text,
-                            _nameController.text,
-                            _phoneNumberController.text,
-                            _locationController.text,
-                            _selectedGender!,
-                            _selectedBloodGroup!,
-                            _image,
-                          );
-                          setState(() {
-                            showProgessBar = false;
-                          });
+                            setState(() {
+                              showProgessBar = false;
+                            });
 
-                          if (res == 'success') {
-                            Get.to(() => HomePage());
+                            if (res == 'success') {
+                              Get.to(() => HomePage());
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(res)),
+                              );
+                            }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(res)),
+                              const SnackBar(content: Text('Please fill all the information of the form')),
                             );
                           }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please correct the errors in the form')),
-                          );
-                        }
-                      },
+                        },
 
-                      child: const Center(
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: const Center(
+                              child: Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -431,285 +434,3 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-// GestureDetector(
-//   onTap: () {
-//     if (_globalKey.currentState!.validate()) {
-//       if (_selectedGender == null) {
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) => AlertDialog(
-//             title: const Text("Error"),
-//             content: const Text("Please select your gender."),
-//             actions: [
-//               TextButton(
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//                 child: const Text("OK"),
-//               ),
-//             ],
-//           ),
-//         );
-//         return;
-//       }
-//       if (_selectedBloodGroup == null) {
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) => AlertDialog(
-//             title: const Text("Error"),
-//             content: const Text("Please select your blood group."),
-//             actions: [
-//               TextButton(
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//                 child: const Text("OK"),
-//               ),
-//             ],
-//           ),
-//         );
-//         return;
-//       }
-//     }
-//   },
-//   child: Padding(
-//     padding: const EdgeInsets.symmetric(vertical: 8.0),
-//     child: Container(
-//       width: double.infinity,
-//       decoration: BoxDecoration(
-//         borderRadius: BorderRadius.circular(10),
-//         color: Colors.red,
-//       ),
-//       child: const Padding(
-//         padding: EdgeInsets.symmetric(vertical: 10.0),
-//         child: Center(
-//           child: Text(
-//             "Continue",
-//             style: TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 14,
-//               color: Colors.white,
-//             ),
-//           ),
-//         ),
-//       ),
-//     ),
-//   ),
-// ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'package:blood_donating/HomePage.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'dart:typed_data';
-//
-// import '../controller/auth_controller.dart';
-// import '../controller/input_text.dart';
-//
-// class RegistrationScreen extends StatefulWidget {
-//   const RegistrationScreen({super.key});
-//
-//   @override
-//   State<RegistrationScreen> createState() => _RegistrationScreenState();
-// }
-//
-// class _RegistrationScreenState extends State<RegistrationScreen> {
-//   TextEditingController userNameEditingController = TextEditingController();
-//   TextEditingController emailEditingController = TextEditingController();
-//   TextEditingController passwordEditingController = TextEditingController();
-//   bool showProgessBar = false;
-//   final AuthController _authController = AuthController();
-//   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-//
-//   Uint8List? _image;
-//
-//   Future<void> galleryImage() async {
-//     Uint8List? im = await _authController.pickProfileImage(ImageSource.gallery);
-//     setState(() {
-//       _image = im;
-//     });
-//   }
-//
-//   Future<void> captureImage() async {
-//     Uint8List? im = await _authController.pickProfileImage(ImageSource.camera);
-//     setState(() {
-//       _image = im;
-//     });
-//   }
-//
-//   bool isValidEmail(String email) {
-//     String emailPattern = r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$';
-//     return RegExp(emailPattern).hasMatch(email);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SingleChildScrollView(
-//         child: Form(
-//           key: _formkey,
-//           child: Column(
-//             children: [
-//               GestureDetector(
-//                 onTap: galleryImage,
-//                 child: _image == null
-//                     ? const CircleAvatar(
-//                   radius: 80,
-//                   backgroundColor: Colors.black,
-//                   backgroundImage:
-//                   AssetImage("assets/images/profile_avatar.jpg"),
-//                 )
-//                     : CircleAvatar(
-//                   radius: 80,
-//                   backgroundColor: Colors.black,
-//                   backgroundImage: MemoryImage(_image!),
-//                 ),
-//               ),
-//               Container(
-//                 width: MediaQuery.of(context).size.width,
-//                 margin: const EdgeInsets.symmetric(horizontal: 20),
-//                 child: InputTextWidget(
-//                   emptyText: "Username is required",
-//                   textEditingController: userNameEditingController,
-//                   labelString: 'Username',
-//                   isObscure: false,
-//                   iconData: Icons.person_outline,
-//                 ),
-//               ),
-//               Container(
-//                 width: MediaQuery.of(context).size.width,
-//                 margin: const EdgeInsets.symmetric(horizontal: 20),
-//                 child: InputTextWidget(
-//                   emptyText: "Email is required",
-//                   textEditingController: emailEditingController,
-//                   labelString: 'Email',
-//                   isObscure: false,
-//                   iconData: Icons.email_outlined,
-//                 ),
-//               ),
-//               Container(
-//                 width: MediaQuery.of(context).size.width,
-//                 margin: const EdgeInsets.symmetric(horizontal: 20),
-//                 child: InputTextWidget(
-//                   emptyText: "Password is required",
-//                   textEditingController: passwordEditingController,
-//                   labelString: 'Password',
-//                   isObscure: true,
-//                   iconData: Icons.lock_outline,
-//                 ),
-//               ),
-//               Column(
-//                 children: [
-//                   Container(
-//                     width: MediaQuery.of(context).size.width - 38,
-//                     height: 54,
-//                     decoration: BoxDecoration(
-//                         color: Colors.blue,
-//                         borderRadius: BorderRadius.circular(10)),
-//                     child: InkWell(
-//                       onTap: () async {
-//                         if (_formkey.currentState!.validate()) {
-//                           if (!isValidEmail(emailEditingController.text)) {
-//                             // Show error message for invalid email
-//                             ScaffoldMessenger.of(context).showSnackBar(
-//                               SnackBar(content: Text('Invalid email format')),
-//                             );
-//                             return;
-//                           }
-//
-//                           setState(() {
-//                             showProgessBar = true;
-//                           });
-//                           String res = await _authController.createNewUser(
-//                             emailEditingController.text,
-//                             passwordEditingController.text,
-//                             _image,
-//                           );
-//                           setState(() {
-//                             showProgessBar = false;
-//                           });
-//
-//                           if (res == 'success') {
-//                             // Navigate to the Login Screen or Home Screen
-//                             Get.to(() => HomePage());
-//                           } else {
-//                             // Show error message
-//                             ScaffoldMessenger.of(context).showSnackBar(
-//                               SnackBar(content: Text(res)),
-//                             );
-//                           }
-//                         } else {
-//                           print("not valid");
-//                         }
-//                       },
-//                       child: const Center(
-//                         child: Text(
-//                           "Sign Up",
-//                           style: TextStyle(
-//                               fontSize: 20,
-//                               color: Colors.black,
-//                               fontWeight: FontWeight.w700),
-//                         ),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   const Text(
-//                     "Already have an Account? ",
-//                     style: TextStyle(
-//                       color: Colors.grey,
-//                       fontSize: 16,
-//                     ),
-//                   ),
-//                   InkWell(
-//                     onTap: () {
-//                       Get.to(() => HomePage());
-//                     },
-//                     child: const Text(
-//                       "Login Now",
-//                       style: TextStyle(
-//                         fontSize: 18,
-//                         color: Colors.black,
-//                         fontWeight: FontWeight.bold,
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               )
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
