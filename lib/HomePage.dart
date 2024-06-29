@@ -1,3 +1,4 @@
+import 'package:blood_donating/Screens/FindDonor_Page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.red
                 , // Replace with the desired color
               ),
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.person_add_rounded),
               title: const Text('Find Donor'),
               onTap: () {
-                Navigator.pop(context);
+                Get.to(const FindDonorPage());
               },
             ),
             ListTile(
@@ -168,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       selectedIndex = 0;
                     });
+                    Get.to(const FindDonorPage());
                   },
                 ),
                 _container(
