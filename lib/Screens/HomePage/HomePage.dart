@@ -1,13 +1,12 @@
-import 'package:blood_donating/Screens/FindDonor_Page.dart';
-import 'package:blood_donating/Widget/Custom%20Drawer%20Header.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:blood_donating/Screens/Find%20Donor%20Dire/FindDonor_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'Screens/AllBloodRequest_Screen.dart';
-import 'Screens/BloodRequestForm.dart';
-import 'Screens/DonorRegisterForm_Screen.dart';
-import 'Screens/HomeRequestList_Screen.dart';
+import '../../Widget/Custom Drawer Header.dart';
+import '../Blood Request List Dire/AllBloodRequest_Screen.dart';
+import '../Find Donor Dire/DonorRegisterForm_Screen.dart';
+import '../My Blood Request Dire/Request Blood Form Screen.dart';
+import 'HomeRequestList_Screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -65,8 +64,9 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red,
         centerTitle: true,
         title: const Text(
-          "Blood Donation App",
-          style: TextStyle(color: Colors.white),
+          "Blood Donation",
+          style: TextStyle(color: Colors.white,
+          fontWeight: FontWeight.bold),
         ),
       ),
       drawer: CustomDrawerHeader(),
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       selectedIndex = 0;
                     });
-                    Get.to(const FindDonorPage());
+                    Get.to(FindDonorPage());
                   },
                 ),
                 _container(
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             const Divider(),
-            const HomeRequestListScreen()
+            HomeRequestListScreen()
           ],
         ),
       ),

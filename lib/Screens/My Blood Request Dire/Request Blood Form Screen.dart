@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '';
-import '../Function/AppBar.dart';
+
+import '../../Function/AppBar.dart';
 import 'BloodRequestFormDetails.dart';
+
 
 class BloodRequestForm extends StatefulWidget {
   const BloodRequestForm({super.key});
@@ -20,7 +21,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emergencyPhoneController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _bloodBagsController = TextEditingController();
   final TextEditingController _hospitalNameController = TextEditingController();
@@ -454,7 +455,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                     fillColor: Colors.black.withOpacity(0.1),
                     border: InputBorder.none,
                     prefixIcon: const Icon(Icons.note_outlined),
-                    labelText: 'Cause of blood ',
+                    labelText: 'Reason for blood ',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -533,7 +534,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Center(
                           child: Text(
-                            "Submit",
+                            "Next",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,

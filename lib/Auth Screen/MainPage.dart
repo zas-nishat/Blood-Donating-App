@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../HomePage.dart';
+import '../Screens/HomePage/HomePage.dart';
 import 'Login or Register page.dart';
 
 class MainHomePage extends StatelessWidget {

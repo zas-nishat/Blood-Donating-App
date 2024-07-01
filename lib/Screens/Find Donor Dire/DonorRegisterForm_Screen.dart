@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../Function/AppBar.dart';
+import '../../Function/AppBar.dart';
+import 'DonorRegistrationConfirm_Screen.dart';
 
 class DonorRegisterFormScreen extends StatefulWidget {
   const DonorRegisterFormScreen({Key? key}) : super(key: key);
@@ -21,18 +21,7 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
   TextEditingController _ageController = TextEditingController();
 
   String? _selectedBloodGroup;
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await picker.pickImage(source: source);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
+  String? _selectedGender;
 
   Widget _buildSelectableContainer({
     required String text,
@@ -61,13 +50,12 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Validate form fields
-      if (_image != null && _selectedBloodGroup != null) {
+      if (_selectedBloodGroup != null) {
         // Navigate to confirmation page
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ConfirmationPage(
-              image: _image!,
+            builder: (context) => DonorConfirmationPage(
               name: _nameController.text,
               contact: _contactController.text,
               location: _locationController.text,
@@ -76,9 +64,8 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
           ),
         );
       } else {
-        // Show snackbar if image or blood group is not selected (though validation should cover this)
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a picture and blood group.')),
+          SnackBar(content: Text('Please select blood group.')),
         );
       }
     }
@@ -96,26 +83,6 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Select donor picture: ",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        _pickImage(ImageSource.gallery);
-                      },
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: _image == null
-                            ? const AssetImage("Assets/profile.png")
-                            : FileImage(_image!) as ImageProvider,
-                      ),
-                    ),
-                  ),
-                ),
                 const Text(
                   "Enter your name: ",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -206,6 +173,37 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Gender: ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildSelectableContainer(
+                      text: 'Male',
+                      isSelected: _selectedGender == 'Male',
+                      onTap: () {
+                        setState(() {
+                          _selectedGender = 'Male';
+                        });
+                      },
+                    ),
+                    _buildSelectableContainer(
+                      text: 'Female',
+                      isSelected: _selectedGender == 'Female',
+                      onTap: () {
+                        setState(() {
+                          _selectedGender = 'Female';
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -311,7 +309,7 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Center(
                           child: Text(
-                            "Submit",
+                            "Next",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -332,60 +330,3 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
   }
 }
 
-class ConfirmationPage extends StatelessWidget {
-  final File image;
-  final String name;
-  final String contact;
-  final String location;
-  final String bloodGroup;
-
-  const ConfirmationPage({
-    Key? key,
-    required this.image,
-    required this.name,
-    required this.contact,
-    required this.location,
-    required this.bloodGroup,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Confirmation'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 80,
-              backgroundImage: FileImage(image),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Name: $name',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Contact: $contact',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Location: $location',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Blood Group: $bloodGroup',
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

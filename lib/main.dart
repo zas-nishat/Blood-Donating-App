@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'Auth Screen/Login or Register page.dart';
+import 'controller/Internet_controller.dart';
 
 void main() async {
+  DependencyInjection.init();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());

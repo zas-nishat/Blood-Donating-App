@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
 import '../Function/UserProfileModel.dart';
-import '../Screens/BloodRequestForm.dart';
-import '../Screens/DonorRegisterForm_Screen.dart';
-import '../Screens/FindDonor_Page.dart';
+import '../Screens/Find Donor Dire/DonorRegisterForm_Screen.dart';
+import '../Screens/Find Donor Dire/FindDonor_Page.dart';
+import '../Screens/My Blood Request Dire/Request Blood Form Screen.dart';
 import '../Screens/Profile_Screen.dart';
 
 class CustomDrawerHeader extends StatefulWidget {

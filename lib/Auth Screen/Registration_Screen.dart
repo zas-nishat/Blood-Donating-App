@@ -1,4 +1,4 @@
-import 'package:blood_donating/HomePage.dart';
+import 'package:blood_donating/Screens/HomePage/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../HomePage.dart';
+import '../Screens/HomePage/HomePage.dart';
 
 class LoginPage extends StatefulWidget {
   final Function() onTap;
