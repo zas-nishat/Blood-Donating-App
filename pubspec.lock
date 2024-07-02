@@ -105,6 +105,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  cloud_functions:
+    dependency: "direct main"
+    description:
+      name: cloud_functions
+      sha256: "4062d11b890b4b6a7e07ecb4fa9c1346614eab9edabacaf9b3a2d7be90ccf44a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
+  cloud_functions_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_functions_platform_interface
+      sha256: "0a3592a7a5d09714d4c1802f6ed5b071ca571b0073b0f18d3899bfab863a8820"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.5.31"
+  cloud_functions_web:
+    dependency: transitive
+    description:
+      name: cloud_functions_web
+      sha256: b7948d01a8e425fe73dd22df3c621fd4f743a1330fd214445a6965f971cf2ed6
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.9.9"
   collection:
     dependency: transitive
     description:
@@ -273,6 +297,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.17.2"
+  firebase_messaging:
+    dependency: "direct main"
+    description:
+      name: firebase_messaging
+      sha256: a1eb38242e072118650139f8485a78d8f12e6d9b6ae563808ca0fa406bdebaad
+      url: "https://pub.dev"
+    source: hosted
+    version: "15.0.2"
+  firebase_messaging_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_messaging_platform_interface
+      sha256: "98faf00cbe125bba136787e1678e7bf213f5e694e8f2615b94ad3d4bdcb0bdc2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.40"
+  firebase_messaging_web:
+    dependency: transitive
+    description:
+      name: firebase_messaging_web
+      sha256: a38e9ccdd5dc4d7dc9eef0097b6a5a3c24842772035e1be103dc1b81d8d09f7c
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.8.10"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -693,6 +741,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  timeago:
+    dependency: "direct main"
+    description:
+      name: timeago
+      sha256: d3204eb4c788214883380253da7f23485320a58c11d145babc82ad16bf4e7764
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.1"
   typed_data:
     dependency: transitive
     description:

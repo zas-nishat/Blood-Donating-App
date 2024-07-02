@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../Function/AppBar.dart';
 import 'BloodDonation_ConfirmationPage.dart';
 
@@ -23,12 +24,6 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
       query = query.where('bloodGroup', isEqualTo: _selectedBloodGroup);
     }
 
-    if (_searchLocation.isNotEmpty) {
-      String lowercasedSearchLocation = _searchLocation.toLowerCase();
-      query = query.where('location', isGreaterThanOrEqualTo: lowercasedSearchLocation)
-          .where('location', isLessThanOrEqualTo: lowercasedSearchLocation + '\uf8ff');
-    }
-
     return query.snapshots();
   }
 
@@ -45,7 +40,7 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {
                 setState(() {
-                  _searchLocation = value;
+                  _searchLocation = value.trim().toLowerCase();
                 });
               },
               decoration: InputDecoration(
@@ -56,19 +51,18 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search, color: Colors.red),
                   onPressed: () {
-                    setState(() {});  // Refresh the StreamBuilder
+                    setState(() {}); // Refresh the StreamBuilder
                   },
                 ),
               ),
             ),
             const SizedBox(height: 20),
-
             // Blood Group Selection
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: const Text(
+                const Expanded(
+                  child: Text(
                     "Blood Group",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
@@ -113,6 +107,15 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
 
                   List<DocumentSnapshot> documents = snapshot.data!.docs;
 
+                  // Apply local filtering based on the search location
+                  if (_searchLocation.isNotEmpty) {
+                    documents = documents.where((document) {
+                      final data = document.data() as Map<String, dynamic>;
+                      final location = data['location'] as String?;
+                      return location != null && location.toLowerCase().contains(_searchLocation);
+                    }).toList();
+                  }
+
                   if (documents.isEmpty) {
                     return Center(
                       child: Text(
@@ -130,50 +133,47 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot document = documents[index];
                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+                      Timestamp createdTime = data['createdTime'] ?? Timestamp.now();
+                      DateTime createdDateTime = createdTime.toDate();
+                      String timeAgo = timeago.format(createdDateTime);
+
                       return Card(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Blood Group: ${data['bloodGroup'] ?? 'Unknown'}',style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold
-                              ),),
-                              Text('Patient Name: ${data['patientName'] ?? 'Unknown'}',style: const TextStyle(
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Blood Group: ${data['bloodGroup'] ?? 'Unknown'}', style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                  Text('$timeAgo', style: const TextStyle(
+                                      fontSize: 16,
+                                      fontStyle: FontStyle.italic
+                                  ),),
+                                ],
+                              ),
+                              Text('Number of Bags: ${data['numberOfBloodBags'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
-                              Text('Phone Number: ${data['phoneNumber'] ?? 'Unknown'}',style: const TextStyle(
+                              Text('Hospital Name: ${data['hospitalName'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
-                              Text('Emergency Number: ${data['emergencyNumber'] ?? 'Unknown'}',style: const TextStyle(
+                              Text('Location: ${data['location'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
-                              Text('Number of Blood Bags: ${data['numberOfBloodBags'] ?? 'Unknown'}',style: const TextStyle(
+                              Text('Phone Number: ${data['phoneNumber'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
-                              Text('Hospital Name: ${data['hospitalName'] ?? 'Unknown'}',style: const TextStyle(
+                              Text('Date: ${DateFormat.yMMMMd().format((data['date'] as Timestamp).toDate())}', style: const TextStyle(
                                   fontSize: 18
                               ),),
-                              Text('Age: ${data['age'] ?? 'Unknown'}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
-                              Text('Gender: ${data['gender'] ?? 'Unknown'}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
-                              Text('Location: ${data['location'] ?? 'Unknown'}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
-                              Text('Date: ${DateFormat.yMMMMd().format((data['date'] as Timestamp).toDate())}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
-                              Text('Time: ${data['time']}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
-                              Text('Reason: ${data['reason'] ?? 'Unknown'}',style: const TextStyle(
-                                  fontSize: 18
-                              ),),
+
                               const SizedBox(height: 20),
                               Center(
                                 child: GestureDetector(

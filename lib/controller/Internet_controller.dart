@@ -17,7 +17,7 @@ class NetworkController extends GetxController {
     if (connectivityResult == ConnectivityResult.none) {
       Get.rawSnackbar(
         messageText: const Text(
-          "You're not connected to the internet. Please connect to internet or some function may not work",
+          "You're not connected to the internet. Please connect to internet or some function may not work.",
           style: TextStyle(
             color: Colors.white,
           ),

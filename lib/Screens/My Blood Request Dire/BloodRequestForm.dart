@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../../Function/AppBar.dart';
 import 'BloodRequestFormDetails.dart';
+
 
 
 class BloodRequestForm extends StatefulWidget {
@@ -86,7 +86,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
         _selectedTime != null &&
         _selectedBloodGroup != null &&
         _selectedGender != null) {
-      Get.to(() => RequestDetailsPage(
+      Get.to(() => RequestRequestFormDetails(
         phoneNumber: _phoneController.text,
         emergencyNumber: _emergencyPhoneController.text,
         patientName: _patientNameController.text,
@@ -296,6 +296,8 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
                   height: 5,
                 ),
                 TextFormField(
+                  maxLength: 11,
+
                   keyboardType: TextInputType.number,
                   controller: _phoneController,
                   decoration: InputDecoration(

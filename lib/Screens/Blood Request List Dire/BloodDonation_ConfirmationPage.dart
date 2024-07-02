@@ -1,9 +1,11 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:blood_donating/Function/MakeCall.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class ConfirmationPage extends StatefulWidget {
   final Map<String, dynamic> requestData;
@@ -21,6 +23,63 @@ class ConfirmationPage extends StatefulWidget {
 
 class _ConfirmationPageState extends State<ConfirmationPage> {
   bool _isChecked = false;
+  bool _canDonate = true;
+  bool _hasDonated = false;  // New variable to track if the user has already donated
+  Timer? _timer;
+  Duration _timeLeft = Duration.zero;
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
+
+  @override
+  void initState() {
+    super.initState();
+    _checkDonationStatus();
+    _checkIfDonated();  // Check if the user has already donated
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _checkDonationStatus() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      // Handle the case where the user is not logged in
+      return;
+    }
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    final userSnapshot = await userDoc.get();
+
+    if (userSnapshot.exists) {
+      final lastDonation = userSnapshot['lastDonation']?.toDate();
+      if (lastDonation != null) {
+        final nextDonationDate = lastDonation.add(const Duration(days: 90));
+        final now = DateTime.now();
+
+        if (now.isBefore(nextDonationDate)) {
+          setState(() {
+            _canDonate = false;
+            _timeLeft = nextDonationDate.difference(now);
+          });
+          _startTimer();
+        }
+      }
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _timeLeft -= const Duration(seconds: 1);
+        if (_timeLeft.isNegative) {
+          _canDonate = true;
+          timer.cancel();
+        }
+      });
+    });
+  }
 
   void _toggleCheckbox(bool? value) {
     setState(() {
@@ -29,6 +88,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   }
 
   void _confirmDonation() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      // Handle the case where the user is not logged in
+      return;
+    }
+
     if (_isChecked) {
       await widget.requestRef.delete();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,8 +104,41 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         ),
       );
 
+      // Save the donation date
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+      await userDoc.set({
+        'lastDonation': DateTime.now(),
+      }, SetOptions(merge: true));
+
+      setState(() {
+        _hasDonated = true;  // Update the state to indicate the user has donated
+      });
+
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pop(context);
+    }
+  }
+
+  void _checkIfDonated() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      return;
+    }
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    final userSnapshot = await userDoc.get();
+
+    if (userSnapshot.exists) {
+      final lastDonation = userSnapshot['lastDonation']?.toDate();
+      if (lastDonation != null) {
+        final now = DateTime.now();
+        final nextDonationDate = lastDonation.add(const Duration(days: 90));
+        if (now.isBefore(nextDonationDate)) {
+          setState(() {
+            _hasDonated = true;
+          });
+        }
+      }
     }
   }
 
@@ -91,7 +189,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // Details Section
             buildDetailRow('Blood Group', widget.requestData['bloodGroup'] ?? 'Unknown', Colors.red),
             buildDetailRow('Patient Name', widget.requestData['patientName'] ?? 'Unknown', Colors.black87),
@@ -109,48 +206,69 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
             const SizedBox(height: 30),
 
             // Checkbox
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Checkbox(
-                  value: _isChecked,
-                  onChanged: _toggleCheckbox,
-                ),
-                const Expanded(
-                  child: Text(
-                    'Yes, I want to donate my blood and I accept the terms and conditions',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 16),
+            if (!_hasDonated) ...[  // Show the checkbox and donation button only if the user has not donated
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: _canDonate ? _toggleCheckbox : null,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Confirm Donation Button
-            GestureDetector(
-              onTap: _isChecked ? _confirmDonation : null,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: _isChecked ? Colors.red : Colors.grey,
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: Center(
+                  const Expanded(
                     child: Text(
-                      "Confirm Donation",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white,
+                      'Yes, I want to donate my blood and I accept the terms and conditions',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              if (!_canDonate) ...[
+                const Text(
+                  'You can donate again in:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${_timeLeft.inDays} days ${_timeLeft.inHours % 24} hours ${_timeLeft.inMinutes % 60} minutes ${_timeLeft.inSeconds % 60} seconds',
+                  style: const TextStyle(fontSize: 16, color: Colors.red),
+                ),
+                const SizedBox(height: 20),
+              ],
+
+              // Confirm Donation Button
+              GestureDetector(
+                onTap: _isChecked && _canDonate ? _confirmDonation : null,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: _isChecked && _canDonate ? Colors.red : Colors.grey,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15.0),
+                    child: Center(
+                      child: Text(
+                        "Confirm Donation",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ] else ...[
+              Center(
+                child: Text(
+                  'You have already donated.',
+                  style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
           ],
         ),
       ),

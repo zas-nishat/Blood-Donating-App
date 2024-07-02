@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../Function/AppBar.dart';
 
-class RequestDetailsPage extends StatelessWidget {
+class RequestRequestFormDetails extends StatelessWidget {
   final String phoneNumber;
   final String emergencyNumber;
   final String patientName;
@@ -17,7 +18,7 @@ class RequestDetailsPage extends StatelessWidget {
   final TimeOfDay time;
   final String reason;
 
-  const RequestDetailsPage({
+  const RequestRequestFormDetails({
     Key? key,
     required this.phoneNumber,
     required this.emergencyNumber,
@@ -83,6 +84,7 @@ class RequestDetailsPage extends StatelessWidget {
         'date': date,
         'time': time.format(context),
         'reason': reason,
+        'createdTime': FieldValue.serverTimestamp(),
       });
 
       // Show a success message
@@ -127,7 +129,7 @@ class RequestDetailsPage extends StatelessWidget {
                 _submitRequestForm(context);
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
-                },
+              },
             ),
           ],
         );
@@ -180,11 +182,6 @@ class RequestDetailsPage extends StatelessWidget {
                   icon: Icons.date_range,
                   label: "Date",
                   value: DateFormat.yMd().format(date)),
-              const Divider(),
-              _buildDetailRow(
-                  icon: Icons.av_timer_sharp,
-                  label: "Time",
-                  value: time.format(context)),
               const Divider(),
               const SizedBox(height: 20),
               GestureDetector(

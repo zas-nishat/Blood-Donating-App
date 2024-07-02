@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../Blood Request List Dire/BloodDonation_ConfirmationPage.dart';
 
 class HomeRequestListScreen extends StatelessWidget {
@@ -32,11 +33,16 @@ class HomeRequestListScreen extends StatelessWidget {
 
           List<DocumentSnapshot> documents = snapshot.data!.docs;
           List<DocumentSnapshot> limitedDocuments = documents.take(10).toList();
-
           return ListView.builder(
             itemCount: limitedDocuments.length,
             itemBuilder: (context, index) {
               DocumentSnapshot document = limitedDocuments[index];
+
+              Timestamp createdTime = document['createdTime'] ?? Timestamp.now();
+              DateTime createdDateTime = createdTime.toDate();
+              String timeAgo = timeago.format(createdDateTime);
+
+
               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
               return Card(
                 child: Padding(
@@ -44,25 +50,22 @@ class HomeRequestListScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Blood Group: ${data['bloodGroup'] ?? 'Unknown'}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Patient Name: ${data['patientName'] ?? 'Unknown'}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Phone Number: ${data['phoneNumber'] ?? 'Unknown'}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Emergency Number: ${data['emergencyNumber'] ?? 'Unknown'}',
-                        style: const TextStyle(fontSize: 18),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Blood Group: ${data['bloodGroup'] ?? 'Unknown'}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text('$timeAgo', style: const TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic
+                          ),),
+                        ],
                       ),
                       Text(
                         'Number of Blood Bags: ${data['numberOfBloodBags'] ?? 'Unknown'}',
@@ -73,27 +76,15 @@ class HomeRequestListScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
-                        'Age: ${data['age'] ?? 'Unknown'}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Gender: ${data['gender'] ?? 'Unknown'}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
                         'Location: ${data['location'] ?? 'Unknown'}',
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
+                        'Phone Number: ${data['phoneNumber'] ?? 'Unknown'}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      Text(
                         'Date: ${DateFormat.yMMMMd().format((data['date'] as Timestamp).toDate())}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Time: ${data['time']}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Reason: ${data['reason'] ?? 'Unknown'}',
                         style: const TextStyle(fontSize: 18),
                       ),
                       const SizedBox(height: 20),

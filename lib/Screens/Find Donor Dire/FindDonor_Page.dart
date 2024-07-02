@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:blood_donating/Function/AppBar.dart';
 import 'package:blood_donating/Function/MakeCall.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -108,13 +109,37 @@ class _FindDonorPageState extends State<FindDonorPage> {
                       return Card(
                         margin: const EdgeInsets.all(8.0),
                         child: ListTile(
-                          title: Text(donor['name']),
-                          subtitle: Text('${donor['bloodGroup']} | ${donor['location']}'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.phone),
-                            onPressed: () {
-                              makePhoneCall(donor['contact']);
-                            }
+                          title: Text(donor['name'],style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                          ),),
+                          subtitle: Text('${donor['location']}',style: TextStyle(
+                            fontSize: 18,
+                          ),),
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Text('${donor['bloodGroup']}',style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),),
+                          ),
+                          trailing: AvatarGlow(
+                            glowCount: 1,
+                            glowRadiusFactor: 0.3,
+                            glowColor: Colors.black, // Color of the glow effect
+                            duration: const Duration(seconds: 2), // Duration of the glow effect
+                            startDelay: const Duration(milliseconds: 100),
+                            child: CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Colors.white,
+                              child: IconButton(
+                                onPressed: () {
+                                  makePhoneCall(donor['contact']);
+                                },
+                                icon: const Icon(Icons.call, size: 15),
+                              ),
+                            ),
                           ),
                         ),
                       );

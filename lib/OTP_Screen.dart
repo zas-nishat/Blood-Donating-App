@@ -15,7 +15,6 @@ class OTPPage extends StatelessWidget {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.15,
               ),
-              // Image in the center
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
@@ -25,7 +24,6 @@ class OTPPage extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // Enter OTP Text
               const Text(
                 'Check your phone',
                 style: TextStyle(
@@ -43,7 +41,6 @@ class OTPPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              // OTP Text Field
               TextField(
                 controller: otpController,
                 keyboardType: TextInputType.number,
@@ -58,8 +55,6 @@ class OTPPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Submit Button
               GestureDetector(
                 onTap: () {},
                 child: Padding(

@@ -2,8 +2,6 @@ import 'package:blood_donating/Auth%20Screen/MainPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'Auth Screen/Login or Register page.dart';
 import 'controller/Internet_controller.dart';
 
 void main() async {
@@ -16,7 +14,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
