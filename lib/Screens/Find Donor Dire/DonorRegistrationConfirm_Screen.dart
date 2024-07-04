@@ -8,6 +8,10 @@ class DonorConfirmationPage extends StatefulWidget {
   final String contact;
   final String location;
   final String bloodGroup;
+  final double latitude;
+  final double longitude;
+  final int age;
+  final String gender;
 
   const DonorConfirmationPage({
     Key? key,
@@ -15,6 +19,10 @@ class DonorConfirmationPage extends StatefulWidget {
     required this.contact,
     required this.location,
     required this.bloodGroup,
+    required this.latitude,
+    required this.longitude,
+    required this.age,
+    required this.gender,
   }) : super(key: key);
 
   @override
@@ -101,7 +109,7 @@ class _DonorConfirmationPageState extends State<DonorConfirmationPage> {
                         _buildDetailRow('Contact', widget.contact),
                         _buildDetailRow('Location', widget.location),
                         _buildDetailRow('Blood Group', widget.bloodGroup),
-                        const SizedBox(height: 30),
+                       const SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
                             _showConfirmationDialog(context);
@@ -230,6 +238,10 @@ class _DonorConfirmationPageState extends State<DonorConfirmationPage> {
         'contact': widget.contact,
         'location': widget.location,
         'bloodGroup': widget.bloodGroup,
+        'latitude': widget.latitude,
+        'longitude': widget.longitude,
+        'age': widget.age,
+        'gender': widget.gender,
         'timestamp': FieldValue.serverTimestamp(), // Add a timestamp for sorting or querying
       });
 

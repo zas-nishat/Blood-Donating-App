@@ -45,7 +45,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   void _checkDonationStatus() async {
     final User? currentUser = _auth.currentUser;
     if (currentUser == null) {
-      // Handle the case where the user is not logged in
       return;
     }
 

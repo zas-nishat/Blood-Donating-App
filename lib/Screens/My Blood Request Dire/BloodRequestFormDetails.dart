@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -19,7 +20,7 @@ class RequestRequestFormDetails extends StatelessWidget {
   final String reason;
 
   const RequestRequestFormDetails({
-    Key? key,
+    super.key,
     required this.phoneNumber,
     required this.emergencyNumber,
     required this.patientName,
@@ -32,7 +33,7 @@ class RequestRequestFormDetails extends StatelessWidget {
     required this.date,
     required this.time,
     required this.reason,
-  }) : super(key: key);
+  });
 
   Widget _buildDetailRow({
     required IconData icon,
@@ -88,22 +89,32 @@ class RequestRequestFormDetails extends StatelessWidget {
       });
 
       // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Request form submitted successfully!'),
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Success',
+          message: 'Your request has been submitted',
+          duration: Duration(seconds: 3),
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
-        ),
+          borderRadius: 10,
+          margin: EdgeInsets.all(10),
+          snackStyle: SnackStyle.FLOATING,
+        )
       );
 
-      // Navigate back or to a different page
       Navigator.of(context).pop();
     } catch (e) {
-      // Show an error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to submit form: $e'),
-          backgroundColor: Colors.red,
-        ),
+      Get.showSnackbar(
+          const GetSnackBar(
+            title: 'Failed',
+            message: 'Failed to submit form',
+            duration: Duration(seconds: 3),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            borderRadius: 10,
+            margin: EdgeInsets.all(10),
+            snackStyle: SnackStyle.FLOATING,
+          )
       );
     }
   }
@@ -136,6 +147,8 @@ class RequestRequestFormDetails extends StatelessWidget {
       },
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {

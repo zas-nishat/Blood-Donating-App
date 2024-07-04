@@ -147,11 +147,14 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Blood Group: ${data['bloodGroup'] ?? 'Unknown'}', style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold
-                                  ),),
+                                  Expanded(
+                                    child: Text('Blood Group: ${data['bloodGroup'] ?? 'Unknown'}', style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold
+                                    ),),
+                                  ),
+                                  SizedBox(width: 5,),
                                   Text('$timeAgo', style: const TextStyle(
                                       fontSize: 16,
                                       fontStyle: FontStyle.italic

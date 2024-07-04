@@ -90,6 +90,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Get.to(GetLocation());
+        },
+        child: Icon(Icons.add),
+      ),
       drawer: const CustomDrawerHeader(),
       body: RefreshIndicator(
         onRefresh: _refreshPage,

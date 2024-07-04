@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../Function/AppBar.dart';
 import 'DonorRegistrationConfirm_Screen.dart';
 
@@ -22,6 +23,8 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
 
   String? _selectedBloodGroup;
   String? _selectedGender;
+  double _latitude = 0.0;
+  double _longitude = 0.0;
 
   Widget _buildSelectableContainer({
     required String text,
@@ -47,25 +50,45 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Validate form fields
-      if (_selectedBloodGroup != null) {
-        // Navigate to confirmation page
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DonorConfirmationPage(
-              name: _nameController.text,
-              contact: _contactController.text,
-              location: _locationController.text,
-              bloodGroup: _selectedBloodGroup!,
-            ),
-          ),
-        );
+      if (_selectedBloodGroup != null && _selectedGender != null) {
+        try {
+          List<Location> locations = await locationFromAddress(_locationController.text);
+          if (locations.isNotEmpty) {
+            setState(() {
+              _latitude = locations[0].latitude;
+              _longitude = locations[0].longitude;
+            });
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DonorConfirmationPage(
+                  name: _nameController.text,
+                  contact: _contactController.text,
+                  location: _locationController.text,
+                  bloodGroup: _selectedBloodGroup!,
+                  latitude: _latitude,
+                  longitude: _longitude,
+                  age: int.parse(_ageController.text),
+                  gender: _selectedGender!,
+                ),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Location not found. Please enter a valid location.')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Enter yout location correctly')),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select blood group.')),
+          SnackBar(content: Text('Please select blood group and gender.')),
         );
       }
     }
@@ -164,7 +187,7 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.black.withOpacity(0.1),
-                    prefixIcon: const Icon(Icons.location_on),
+                    prefixIcon: const Icon(Icons.cake),
                     labelText: 'Enter your age',
                   ),
                   validator: (value) {
@@ -329,4 +352,3 @@ class _DonorRegisterFormScreenState extends State<DonorRegisterFormScreen> {
     );
   }
 }
-
