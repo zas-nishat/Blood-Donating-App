@@ -102,20 +102,9 @@ class RequestRequestFormDetails extends StatelessWidget {
         )
       );
 
+      // Navigate back or to a different page
       Navigator.of(context).pop();
     } catch (e) {
-      Get.showSnackbar(
-          const GetSnackBar(
-            title: 'Failed',
-            message: 'Failed to submit form',
-            duration: Duration(seconds: 3),
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            borderRadius: 10,
-            margin: EdgeInsets.all(10),
-            snackStyle: SnackStyle.FLOATING,
-          )
-      );
     }
   }
 
@@ -147,8 +136,6 @@ class RequestRequestFormDetails extends StatelessWidget {
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {

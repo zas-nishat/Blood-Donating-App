@@ -1,7 +1,8 @@
-import 'package:blood_donating/GetLocation.dart';
 import 'package:blood_donating/Screens/Find%20Donor%20Dire/FindDonor_Page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Function/Notification_dire/firebase_notification_service.dart';
 import '../../Widget/Custom Drawer Header.dart';
 import '../Blood Request List Dire/AllBloodRequest_Screen.dart';
 import '../Find Donor Dire/DonorRegisterForm_Screen.dart';
@@ -9,7 +10,7 @@ import '../My Blood Request Dire/BloodRequestForm.dart';
 import 'HomeRequestList_Screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -25,10 +26,22 @@ class _HomePageState extends State<HomePage> {
   final CollectionReference usersCollection =
   FirebaseFirestore.instance.collection('users');
 
+  NotificationServices notificationService = NotificationServices();
+
   @override
   void initState() {
     super.initState();
     _calculateTimeLeft();
+    notificationService.requestNotificationPermission();
+    notificationService.getDeviceToken().then((value){
+      if(kDebugMode) {
+        print("device token");
+      }
+      if(kDebugMode) {
+        print(value);
+      }
+    });
+    notificationService.firebaseInit();
   }
 
   Future<void> _calculateTimeLeft() async {
@@ -90,12 +103,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          Get.to(GetLocation());
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     Get.to(GetLocation());
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
       drawer: const CustomDrawerHeader(),
       body: RefreshIndicator(
         onRefresh: _refreshPage,

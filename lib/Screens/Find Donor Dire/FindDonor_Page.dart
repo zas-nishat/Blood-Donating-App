@@ -2,14 +2,17 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:blood_donating/Function/AppBar.dart';
 import 'package:blood_donating/Function/MakeCall.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FindDonorPage extends StatefulWidget {
   const FindDonorPage({super.key});
 
   @override
- _FindDonorPageState createState() => _FindDonorPageState();
+  _FindDonorPageState createState() => _FindDonorPageState();
 }
 
 class _FindDonorPageState extends State<FindDonorPage> {
@@ -19,6 +22,31 @@ class _FindDonorPageState extends State<FindDonorPage> {
   late Future<List<Map<String, dynamic>>> _futureDonors;
   late Position _currentPosition;
   bool _locationInitialized = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _hasDonated = false;
+
+  void _checkIfDonated() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    final userSnapshot = await userDoc.get();
+
+    if (userSnapshot.exists) {
+      final lastDonation = userSnapshot['lastDonation']?.toDate();
+      if (lastDonation != null) {
+        final now = DateTime.now();
+        final nextDonationDate = lastDonation.add(const Duration(days: 90));
+        if (now.isBefore(nextDonationDate)) {
+          setState(() {
+            _hasDonated = true;
+          });
+        }
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +55,17 @@ class _FindDonorPageState extends State<FindDonorPage> {
   }
 
   Future<void> _getCurrentLocation() async {
+    // Check for location permission
+    final status = await Permission.location.status;
+    if (status.isDenied) {
+      final result = await Permission.location.request();
+      if (!result.isGranted) {
+        // If permission is not granted, show an alert or message to the user
+        _showLocationPermissionDialog();
+        return;
+      }
+    }
+
     try {
       final Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -45,8 +84,10 @@ class _FindDonorPageState extends State<FindDonorPage> {
   }
 
   Future<List<Map<String, dynamic>>> getFindDonorData() async {
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('donors').get();
-    List<Map<String, dynamic>> donors = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    final QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('donors').get();
+    List<Map<String, dynamic>> donors =
+        snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 
     if (!_showNearbyDonors) {
       donors.shuffle();
@@ -69,17 +110,21 @@ class _FindDonorPageState extends State<FindDonorPage> {
           lat2,
           lon2,
         );
-        return distance1.compareTo(distance2);  // Sort by distance
+        return distance1.compareTo(distance2); // Sort by distance
       });
     }
 
     // Filter by blood group and location
     donors = donors.where((donor) {
-      final matchesBloodGroup = _selectedBloodGroup == null || donor['bloodGroup'] == _selectedBloodGroup;
-      final matchesLocation = _location.isEmpty || (donor['location'] as String?)!.toLowerCase().contains(_location.toLowerCase()) ?? false;
+      final matchesBloodGroup = _selectedBloodGroup == null ||
+          donor['bloodGroup'] == _selectedBloodGroup;
+      final matchesLocation = _location.isEmpty ||
+              (donor['location'] as String?)!
+                  .toLowerCase()
+                  .contains(_location.toLowerCase()) ??
+          false;
       return matchesBloodGroup && matchesLocation;
     }).toList();
-
 
     if (_showNearbyDonors) {
       donors.sort((a, b) {
@@ -100,7 +145,7 @@ class _FindDonorPageState extends State<FindDonorPage> {
           lat2,
           lon2,
         );
-        return distance1.compareTo(distance2);  // Sort by distance
+        return distance1.compareTo(distance2); // Sort by distance
       });
     }
 
@@ -113,10 +158,13 @@ class _FindDonorPageState extends State<FindDonorPage> {
     });
   }
 
-  String _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    final double distanceInMeters = Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+  String _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    final double distanceInMeters =
+        Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
     final double distanceInKm = distanceInMeters / 1000;
-    return distanceInKm.toStringAsFixed(2); // returns distance in kilometers with 2 decimal places
+    return distanceInKm.toStringAsFixed(
+        2); // returns distance in kilometers with 2 decimal places
   }
 
   void _onFilterSelection(String value) {
@@ -130,18 +178,55 @@ class _FindDonorPageState extends State<FindDonorPage> {
     });
   }
 
+  void _showLocationPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Location Permission Required'),
+        content: const Text(
+            'This app requires location access to find nearby donors. Please grant location permission in the app settings. or you may face problem'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              openAppSettings();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Find Donor"),
+        backgroundColor: Colors.red,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            )),
+        title: const Text(
+          "Find Donor",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         actions: [
-          PopupMenuButton<String>(
+          PopupMenuButton(
             onSelected: _onFilterSelection,
+            icon: const Icon(Icons.more_vert,
+                color: Colors.white), // Change the icon color to white
             itemBuilder: (BuildContext context) {
               return [
-                PopupMenuItem(value: 'All Donors', child: Text('All Donors')),
-                PopupMenuItem(value: 'Nearby Donors', child: Text('Nearby Donors')),
+                const PopupMenuItem(
+                    value: 'All Donors', child: Text('All Donors')),
+                const PopupMenuItem(
+                    value: 'Nearby Donors', child: Text('Nearby Donors')),
               ];
             },
           ),
@@ -175,9 +260,9 @@ class _FindDonorPageState extends State<FindDonorPage> {
                     hint: const Text("Blood Group"),
                     items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
                         .map((bloodGroup) => DropdownMenuItem(
-                      value: bloodGroup,
-                      child: Text(bloodGroup),
-                    ))
+                              value: bloodGroup,
+                              child: Text(bloodGroup),
+                            ))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -199,8 +284,11 @@ class _FindDonorPageState extends State<FindDonorPage> {
               future: _futureDonors,
               builder: (context, snapshot) {
                 if (!_locationInitialized) {
-                  return const Center(child: CircularProgressIndicator()); // Show loading spinner if location is not initialized
-                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                      child:
+                          CircularProgressIndicator()); // Show loading spinner if location is not initialized
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
@@ -212,12 +300,14 @@ class _FindDonorPageState extends State<FindDonorPage> {
                     itemCount: donors.length,
                     itemBuilder: (context, index) {
                       final donor = donors[index];
-                      final double donorLat = donor['latitude']?.toDouble() ?? 0.0;
-                      final double donorLon = donor['longitude']?.toDouble() ?? 0.0;
+                      final double donorLat =
+                          donor['latitude']?.toDouble() ?? 0.0;
+                      final double donorLon =
+                          donor['longitude']?.toDouble() ?? 0.0;
 
                       // Ensure that the donor has valid latitude and longitude
                       if (donorLat == 0.0 || donorLon == 0.0) {
-                        return SizedBox.shrink(); // Skip invalid data
+                        return const SizedBox.shrink(); // Skip invalid data
                       }
 
                       final String distance = _calculateDistance(
@@ -257,7 +347,8 @@ class _FindDonorPageState extends State<FindDonorPage> {
                           trailing: AvatarGlow(
                             glowCount: 1,
                             glowColor: Colors.black, // Color of the glow effect
-                            duration: const Duration(seconds: 2), // Duration of the glow effect
+                            duration: const Duration(
+                                seconds: 2), // Duration of the glow effect
                             startDelay: const Duration(milliseconds: 100),
                             child: CircleAvatar(
                               radius: 22,

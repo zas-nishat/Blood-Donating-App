@@ -184,7 +184,7 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ConfirmationPage(
+                                        builder: (context) => BloodDonationConfirmationPage(
                                           requestData: data,
                                           requestRef: document.reference,
                                         ),

@@ -18,7 +18,8 @@ class CustomDrawerHeader extends StatefulWidget {
 
 class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
   final currentUser = FirebaseAuth.instance.currentUser!;
-  final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
 
   @override
   void initState() {
@@ -47,7 +48,8 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
                 return const Center(child: Text('Loading...'));
               }
 
-              final userProfile = UserProfile.fromDocumentSnapshot(snapshot.data!);
+              final userProfile =
+                  UserProfile.fromDocumentSnapshot(snapshot.data!);
 
               return UserAccountsDrawerHeader(
                 currentAccountPicture: Container(
@@ -61,17 +63,17 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
                     borderRadius: BorderRadius.circular(50),
                     child: userProfile.profileImageUrl != null
                         ? CachedNetworkImage(
-                      imageUrl: userProfile.profileImageUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
-                    )
+                            imageUrl: userProfile.profileImageUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          )
                         : Image.asset(
-                      'Assets/profile.png', // Replace with the path to your placeholder image asset
-                      fit: BoxFit.cover,
-                    ),
+                            'Assets/profile.png', // Replace with the path to your placeholder image asset
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 decoration: const BoxDecoration(
@@ -79,7 +81,8 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
                 ),
                 accountName: Text(userProfile.name ?? 'John Doe'),
                 accountEmail: Text(
-                  currentUser.email![0].toUpperCase() + currentUser.email!.substring(1),
+                  currentUser.email![0].toUpperCase() +
+                      currentUser.email!.substring(1),
                 ),
               );
             },

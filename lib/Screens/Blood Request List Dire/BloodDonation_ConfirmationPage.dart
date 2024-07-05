@@ -7,24 +7,24 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
-class ConfirmationPage extends StatefulWidget {
+class BloodDonationConfirmationPage extends StatefulWidget {
   final Map<String, dynamic> requestData;
   final DocumentReference requestRef;
 
-  const ConfirmationPage({
-    Key? key,
+  const BloodDonationConfirmationPage({
+    super.key,
     required this.requestData,
     required this.requestRef,
-  }) : super(key: key);
+  });
 
   @override
-  _ConfirmationPageState createState() => _ConfirmationPageState();
+  _BloodDonationConfirmationPageState createState() => _BloodDonationConfirmationPageState();
 }
 
-class _ConfirmationPageState extends State<ConfirmationPage> {
+class _BloodDonationConfirmationPageState extends State<BloodDonationConfirmationPage> {
   bool _isChecked = false;
   bool _canDonate = true;
-  bool _hasDonated = false;  // New variable to track if the user has already donated
+  bool _hasDonated = false;  // Track if the user has already donated
   Timer? _timer;
   Duration _timeLeft = Duration.zero;
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
@@ -44,9 +44,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   void _checkDonationStatus() async {
     final User? currentUser = _auth.currentUser;
-    if (currentUser == null) {
-      return;
-    }
+    if (currentUser == null) return;
 
     final userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
     final userSnapshot = await userDoc.get();
@@ -88,10 +86,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   void _confirmDonation() async {
     final User? currentUser = _auth.currentUser;
-    if (currentUser == null) {
-      // Handle the case where the user is not logged in
-      return;
-    }
+    if (currentUser == null) return;
 
     if (_isChecked) {
       await widget.requestRef.delete();
@@ -120,9 +115,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   void _checkIfDonated() async {
     final User? currentUser = _auth.currentUser;
-    if (currentUser == null) {
-      return;
-    }
+    if (currentUser == null) return;
 
     final userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
     final userSnapshot = await userDoc.get();
@@ -149,29 +142,21 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 20,
-          ),
+          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: AvatarGlow(
-              glowColor: Colors.white, // Color of the glow effect
-              duration: const Duration(seconds: 2), // Duration of the glow effect
+              glowColor: Colors.white,
+              duration: const Duration(seconds: 2),
               startDelay: const Duration(milliseconds: 100),
               child: CircleAvatar(
                 radius: 18,
                 backgroundColor: Colors.white,
                 child: IconButton(
-                  onPressed: () {
-                    makePhoneCall(widget.requestData['phoneNumber']);
-                  },
+                  onPressed: () => makePhoneCall(widget.requestData['phoneNumber']),
                   icon: const Icon(Icons.call, size: 15),
                 ),
               ),
@@ -188,7 +173,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Details Section
             buildDetailRow('Blood Group', widget.requestData['bloodGroup'] ?? 'Unknown', Colors.red),
             buildDetailRow('Patient Name', widget.requestData['patientName'] ?? 'Unknown', Colors.black87),
             buildDetailRow('Phone Number', widget.requestData['phoneNumber'] ?? 'Unknown', Colors.black87),
@@ -204,8 +188,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
             const SizedBox(height: 30),
 
-            // Checkbox
-            if (!_hasDonated) ...[  // Show the checkbox and donation button only if the user has not donated
+            if (!_hasDonated) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -236,7 +219,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const SizedBox(height: 20),
               ],
 
-              // Confirm Donation Button
               GestureDetector(
                 onTap: _isChecked && _canDonate ? _confirmDonation : null,
                 child: Container(
@@ -282,7 +264,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         children: [
           Text(
             '$label:',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

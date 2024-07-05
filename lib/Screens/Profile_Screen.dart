@@ -291,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                   Text(
-                                    _timeLeftText,
+                                    "${_timeLeftText.isEmpty ? "You haven't donated blood yet." : _timeLeftText}",
                                     style: const TextStyle(fontSize: 20, color: Colors.red),
                                   )
                                 ],

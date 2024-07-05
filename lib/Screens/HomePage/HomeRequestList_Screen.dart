@@ -15,6 +15,11 @@ class HomeRequestListScreen extends StatelessWidget {
       child: StreamBuilder<QuerySnapshot>(
         stream: _bloodRequestsCollection.snapshots(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading indicator while waiting for data
+            return const Center(child: CircularProgressIndicator());
+          }
+
           if (snapshot.hasError) {
             return const Center(child: Text('Error: Something went wrong'));
           }
@@ -41,7 +46,6 @@ class HomeRequestListScreen extends StatelessWidget {
               Timestamp createdTime = document['createdTime'] ?? Timestamp.now();
               DateTime createdDateTime = createdTime.toDate();
               String timeAgo = timeago.format(createdDateTime);
-
 
               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
               return Card(
@@ -94,7 +98,7 @@ class HomeRequestListScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ConfirmationPage(
+                                builder: (context) => BloodDonationConfirmationPage(
                                   requestData: data,
                                   requestRef: document.reference,
                                 ),
