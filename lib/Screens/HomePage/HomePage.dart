@@ -82,6 +82,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.red,
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

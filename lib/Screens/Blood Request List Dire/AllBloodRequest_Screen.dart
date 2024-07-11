@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../Function/AppBar.dart';
 import 'BloodDonation_ConfirmationPage.dart';
+import 'dart:async';
 
 class AllBloodRequestScreen extends StatefulWidget {
   const AllBloodRequestScreen({super.key});
@@ -16,6 +17,55 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
   String? _selectedBloodGroup;
   String _searchLocation = '';
   final CollectionReference _bloodRequestsCollection = FirebaseFirestore.instance.collection('blood_requests');
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleDailyDeletion();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _scheduleDailyDeletion() {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final durationUntilTomorrow = tomorrow.difference(now);
+
+    // Schedule the initial run for tomorrow at midnight
+    Future.delayed(durationUntilTomorrow, _startPeriodicDeletion);
+  }
+
+  void _startPeriodicDeletion() {
+    _timer?.cancel(); // Cancel any existing timer
+    _deleteOldRequests(); // Run immediately on first start
+
+    // Schedule the periodic task to run daily
+    _timer = Timer.periodic(Duration(days: 1), (timer) {
+      _deleteOldRequests();
+    });
+  }
+
+  Future<void> _deleteOldRequests() async {
+    final now = DateTime.now();
+    final sevenDaysAgo = now.subtract(Duration(days: 7));
+
+    QuerySnapshot snapshot = await _bloodRequestsCollection
+        .where('date', isLessThan: Timestamp.fromDate(sevenDaysAgo))
+        .get();
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+    print('Deleted old blood requests');
+  }
 
   Stream<QuerySnapshot> _getFilteredRequests() {
     Query query = _bloodRequestsCollection;
@@ -164,6 +214,9 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                               Text('Number of Bags: ${data['numberOfBloodBags'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
+                              Text('Patient Name: ${data['patientName'] ?? 'Unknown'}', style: const TextStyle(
+                                  fontSize: 18
+                              ),),
                               Text('Hospital Name: ${data['hospitalName'] ?? 'Unknown'}', style: const TextStyle(
                                   fontSize: 18
                               ),),
@@ -203,7 +256,7 @@ class _AllBloodRequestScreenState extends State<AllBloodRequestScreen> {
                                         padding: EdgeInsets.symmetric(vertical: 10.0),
                                         child: Center(
                                           child: Text(
-                                            "I want to donate",
+                                            "Blood Need",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,

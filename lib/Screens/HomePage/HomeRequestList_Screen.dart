@@ -76,6 +76,10 @@ class HomeRequestListScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
+                        'Patient Name: ${data['patientName'] ?? 'Unknown'}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      Text(
                         'Hospital Name: ${data['hospitalName'] ?? 'Unknown'}',
                         style: const TextStyle(fontSize: 18),
                       ),
@@ -117,7 +121,7 @@ class HomeRequestListScreen extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(vertical: 10.0),
                                 child: Center(
                                   child: Text(
-                                    "I want to donate",
+                                    "Blood Need",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,

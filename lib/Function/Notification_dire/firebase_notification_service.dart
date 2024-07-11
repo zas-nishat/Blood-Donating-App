@@ -31,7 +31,6 @@ class NotificationServices {
 
   void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
-
     });
   }
 

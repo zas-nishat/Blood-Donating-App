@@ -218,7 +218,7 @@ class _DonorConfirmationPageState extends State<DonorConfirmationPage> {
     final CollectionReference donorsCollection = FirebaseFirestore.instance.collection('donors');
 
     try {
-      // Check if the user has already filled the form
+
       final QuerySnapshot querySnapshot = await donorsCollection.where('uid', isEqualTo: uid).get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -230,10 +230,9 @@ class _DonorConfirmationPageState extends State<DonorConfirmationPage> {
         );
         return;
       }
-
       // Add the donor details to the Firestore collection
       await donorsCollection.add({
-        'uid': uid, // Add the UID of the current user
+        'uid': uid,
         'name': widget.name,
         'contact': widget.contact,
         'location': widget.location,
