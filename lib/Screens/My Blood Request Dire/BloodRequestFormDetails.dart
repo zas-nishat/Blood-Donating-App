@@ -1,3 +1,5 @@
+import 'package:blood_donating/Function/SendFCM.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -89,23 +91,25 @@ class RequestRequestFormDetails extends StatelessWidget {
       });
 
       // Show a success message
-      Get.showSnackbar(
-        const GetSnackBar(
-          title: 'Success',
-          message: 'Your request has been submitted',
-          duration: Duration(seconds: 3),
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          borderRadius: 10,
-          margin: EdgeInsets.all(10),
-          snackStyle: SnackStyle.FLOATING,
-        )
+      Get.showSnackbar(const GetSnackBar(
+        title: 'Success',
+        message: 'Your request has been submitted',
+        duration: Duration(seconds: 3),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        borderRadius: 10,
+        margin: EdgeInsets.all(10),
+        snackStyle: SnackStyle.FLOATING,
+      ));
+
+      SendFCM().call(
+        title: "$bloodGroup blood is requested.",
+        body: "If you can donate, please open this notification.",
       );
 
       // Navigate back or to a different page
       Navigator.of(context).pop();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<void> _showConfirmationDialog(BuildContext context) async {
@@ -116,7 +120,7 @@ class RequestRequestFormDetails extends StatelessWidget {
         return AlertDialog(
           title: const Text('Confirm Submission'),
           content: const Text('Are you sure you want to submit this request?'),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
@@ -148,7 +152,9 @@ class RequestRequestFormDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildDetailRow(
-                  icon: Icons.person, label: "Patient Name", value: patientName),
+                  icon: Icons.person,
+                  label: "Patient Name",
+                  value: patientName),
               const Divider(),
               _buildDetailRow(
                   icon: Icons.phone, label: "Phone Number", value: phoneNumber),
@@ -171,12 +177,15 @@ class RequestRequestFormDetails extends StatelessWidget {
               _buildDetailRow(icon: Icons.cake, label: "Age", value: age),
               const Divider(),
               _buildDetailRow(
-                  icon: Icons.bloodtype, label: "Blood Group", value: bloodGroup),
+                  icon: Icons.bloodtype,
+                  label: "Blood Group",
+                  value: bloodGroup),
               const Divider(),
               _buildDetailRow(
                   icon: Icons.person_outline, label: "Gender", value: gender),
               const Divider(),
-              _buildDetailRow(icon: Icons.note_outlined, label: "Problem", value: reason),
+              _buildDetailRow(
+                  icon: Icons.note_outlined, label: "Problem", value: reason),
               const Divider(),
               _buildDetailRow(
                   icon: Icons.date_range,

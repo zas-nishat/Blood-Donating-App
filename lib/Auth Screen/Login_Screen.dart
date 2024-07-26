@@ -1,5 +1,8 @@
 import 'package:blood_donating/Auth%20Screen/ForgotPassword_Screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +17,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -22,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscureText = true;
 
-  Future<void> signIn(BuildContext context) async {
+  Future<void> signIn(BuildContext context) async { 
     if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -48,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
+      // subscribeToBloodGroupNotification();
       Navigator.pop(context); // Close the progress dialog on success
 
       // Navigate to the next screen or perform other actions on successful login
@@ -280,4 +283,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  // void subscribeToBloodGroupNotification() async{
+  //   String uid = _auth.currentUser!.uid;
+  //   final user = await FirebaseFirestore.instance.collection("users").doc(uid).get();
+  //   final bloodGroup = user.data()?["blood"];
+  //   FirebaseMessaging.instance.subscribeToTopic("all");
+  // }
 }

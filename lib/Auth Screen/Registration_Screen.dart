@@ -1,4 +1,6 @@
 import 'package:blood_donating/Screens/HomePage/HomePage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -396,6 +398,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             });
 
                             if (res == 'success') {
+                              FirebaseMessaging.instance.getToken().then((token){
+                                print(token);
+                              });
+                              // FirebaseMessaging.instance.subscribeToTopic("all");
                               Get.to(() => HomePage());
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
